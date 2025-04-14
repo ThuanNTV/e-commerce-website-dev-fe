@@ -1,0 +1,16 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .btn-primary {
+    @apply bg-emerald-500 hover:bg-emerald-600 transition-colors text-white py-2 px-4 rounded-lg;
+  }
+  /* Other component classes */
+}
+@layer utilities {
+  .bg-hero-pattern {
+    background-image: url("/assets/images/hero-pattern.svg");
+  }
+  /* Other utility classes */
+}
