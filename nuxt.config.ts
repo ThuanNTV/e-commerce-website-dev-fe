@@ -19,27 +19,18 @@ export default defineNuxtConfig({
   tailwindcss: {
     config: {
       content: [
-        "./components/**/*.{js,vue,ts}",
-        "./layouts/**/*.vue",
-        "./pages/**/*.vue",
-        "./plugins/**/*.{js,ts}",
-        "./node_modules/primevue/**/*.{vue,js,ts,jsx,tsx}",
-        "./app.vue",
-        "./error.vue",
+        "./pages/**/*.{js,ts,vue}",
+        "./components/**/*.{js,ts,vue}",
+        "./layouts/**/*.{js,ts,vue}",
+        "./node_modules/primevue/**/*.{vue,js,ts,jsx,tsx}", // PrimeVue components
       ],
       theme: {
         extend: {
           colors: {
             primary: "#10b981",
-            secondary: "#3b82f6",
-            danger: "#ef4444",
           },
         },
       },
-      plugins: [
-        require("@tailwindcss/forms"),
-        require("@tailwindcss/typography"),
-      ],
     },
   },
 
