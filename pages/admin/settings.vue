@@ -55,9 +55,9 @@ definePageMeta({
   middleware: "auth",
 });
 
-import { ref, onMounted } from "vue";
-import { useToast } from "vue-toastification";
-
+// Sửa cách import toast
+import toastification from "vue-toastification";
+const { useToast } = toastification;
 const toast = useToast();
 
 const form = ref({
@@ -67,23 +67,40 @@ const form = ref({
   maintenanceMode: false,
 });
 
-onMounted(async () => {
-  // Load settings từ API
-  const res = await fetch("/api/settings");
-  const data = await res.json();
-  form.value = data;
+// Sử dụng useAsyncData thay vì onMounted để SSR
+const { data, error } = await useAsyncData("settings", async () => {
+  try {
+    return await $fetch("/api/settings"); // Sử dụng $fetch của Nuxt
+  } catch (err) {
+    toast.error("Không tải được cài đặt");
+    console.error("Lỗi API:", err);
+    return null;
+  }
 });
 
-const saveSettings = async () => {
-  const res = await fetch("/api/settings", {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(form.value),
+// Xử lý lỗi server-side
+if (error.value) {
+  throw createError({
+    statusCode: 500,
+    message: "Lỗi tải cài đặt từ server",
   });
-  if (res.ok) {
+}
+
+// Cập nhật form khi có data
+if (data.value) {
+  form.value = data.value;
+}
+
+const saveSettings = async () => {
+  try {
+    await $fetch("/api/settings", {
+      method: "PUT",
+      body: form.value,
+    });
     toast.success("Đã lưu cài đặt!");
-  } else {
-    toast.error("Lỗi khi lưu cài đặt.");
+  } catch (err) {
+    toast.error("Lỗi khi lưu cài đặt");
+    console.error("Lỗi API:", err);
   }
 };
 </script>
