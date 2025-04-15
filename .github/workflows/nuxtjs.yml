@@ -1,8 +1,8 @@
-name: Deploy Nuxt site to Pages
+name: Deploy Nuxt 3 to GitHub Pages
 
 on:
   push:
-    branches: ["main"]
+    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -15,10 +15,10 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Setup Node.js 20.x
@@ -27,40 +27,38 @@ jobs:
           node-version: "20.x"
           cache: "npm"
 
-      - name: Cache dependencies
-        uses: actions/cache@v4
-        with:
-          path: |
-            node_modules
-            .nuxt
-          key: ${{ runner.os }}-nuxt-${{ hashFiles('package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-nuxt-
-
       - name: Install dependencies
         run: npm ci --prefer-offline
-        env:
-          NODE_ENV: production
 
-      - name: Build with Prerender
+      - name: Build with Nuxt
         run: npm run generate
         env:
           NITRO_PRERENDER_DEBUG: true
-          API_BASE_URL: ${{ secrets.API_BASE_URL }}
+          NUXT_PUBLIC_API_BASE: ${{ secrets.API_BASE_URL }}
           NUXT_PUBLIC_SITE_NAME: "My Store"
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./dist
+          path: ./.output/public
 
   deploy:
+    name: Deploy to GitHub Pages
+    needs: build-and-deploy
+    runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: build
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+        with:
+          publish-dir: ./.output/public
+          publish-branch: gh-pages
+          publish-repo: ${{ github.repository }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "Deploy Nuxt 3 to GitHub Pages"
+          allow-empty-commit: true
+          commit-sha: ${{ github.sha }}
+          commit-user-name: "GitHub Actions"
