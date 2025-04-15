@@ -35,26 +35,16 @@ export default defineNuxtConfig({
   },
 
   pinia: {
-    autoImports: [
-      "defineStore",
-      "acceptHMRUpdate",
-      ["defineStore", "definePiniaStore"],
-    ],
+    autoImports: ["defineStore", ["defineStore", "definePiniaStore"]],
   },
 
   i18n: {
-    locales: [
-      { code: "en", iso: "en-US", file: "en.json" },
-      { code: "vi", iso: "vi-VN", file: "vi.json" },
-    ],
+    locales: ["en", "vi"],
     defaultLocale: "vi",
-    lazy: true,
-    langDir: "locales",
-    strategy: "prefix_except_default",
-    detectBrowserLanguage: {
-      useCookie: true,
-      cookieKey: "i18n_redirected",
-      redirectOn: "root",
+    vueI18n: resolve("./i18n.config.ts"),
+    strategy: "no_prefix",
+    bundle: {
+      optimizeTranslationDirective: false, // Thêm dòng này để loại bỏ cảnh báo
     },
   },
 
@@ -63,7 +53,6 @@ export default defineNuxtConfig({
     public: {
       stripeKey: process.env.STRIPE_PUBLIC_KEY || "",
       apiBase: process.env.API_BASE_URL || "",
-      baseURL: process.env.NUXT_PUBLIC_BASE_URL || "/",
     },
   },
 
@@ -72,32 +61,6 @@ export default defineNuxtConfig({
     "primeicons/primeicons.css",
     "@/assets/css/primevue/theme.css",
   ],
-  // Cấu hình Nitro
-  nitro: {
-    prerender: {
-      crawlLinks: true,
-      routes: ["/", "/404"],
-    },
-    compressPublicAssets: true,
-  },
 
-  // Cấu hình ứng dụng
-  app: {
-    baseURL: process.env.NUXT_PUBLIC_BASE_URL || "/",
-    buildAssetsDir: "/_nuxt/",
-    head: {
-      meta: [
-        { charset: "utf-8" },
-        { name: "viewport", content: "width=device-width, initial-scale=1" },
-      ],
-      link: [
-        {
-          rel: "icon",
-          type: "image/png",
-          href: "/favicon.png",
-        },
-      ],
-    },
-  },
   compatibilityDate: "2025-04-15",
 });
