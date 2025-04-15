@@ -3,40 +3,33 @@
     class="bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow overflow-hidden border border-gray-200"
   >
     <!-- Product Image -->
-    <NuxtLink :to="`/products/${product.id}`">
-      <img
-        :src="product.image"
-        :alt="product.name"
-        class="w-full h-64 object-cover"
-      />
-    </NuxtLink>
+    <img
+      :src="product.image"
+      :alt="product.name"
+      class="w-full h-64 object-cover"
+    />
 
     <div class="p-4 space-y-3">
       <!-- Product Name -->
-      <NuxtLink :to="`/products/${product.id}`">
-        <h3
-          class="text-lg font-semibold text-gray-800 hover:text-primary truncate"
-        >
-          {{ product.name }}
-        </h3>
-      </NuxtLink>
+      <h3 class="text-lg font-semibold text-gray-800">{{ product.name }}</h3>
 
       <!-- Product Category -->
-      <p class="text-sm text-gray-500 truncate">
-        {{ product.category }}
-      </p>
+      <p class="text-sm text-gray-500">{{ product.category }}</p>
+
+      <!-- Product Description -->
+      <p class="text-sm text-gray-600 truncate">{{ product.description }}</p>
 
       <!-- Price & Add to Cart Button -->
       <div class="flex items-center justify-between">
-        <span class="text-xl font-bold text-primary">
-          {{ formatCurrency(product.price) }}
-        </span>
-        <PrimeButton
-          icon="pi pi-shopping-cart"
-          label="Add to Cart"
-          class="p-button-success"
+        <span class="text-xl font-bold text-primary">{{
+          formatCurrency(product.price)
+        }}</span>
+        <button
           @click="addToCart"
-        />
+          class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+        >
+          Add to Cart
+        </button>
       </div>
     </div>
   </div>
@@ -45,24 +38,23 @@
 <script setup lang="ts">
 import { defineProps } from "vue";
 import { useCart } from "@/stores/cart";
-import PrimeButton from "primevue/button";
 
 // Define product props
 const props = defineProps<{
   product: {
-    id: string | number;
+    id: number;
     name: string;
     image: string;
     category: string;
     price: number;
+    description: string;
   };
 }>();
 
 // Add to cart function
-const { addProduct } = useCart();
-
+const cartStore = useCart();
 function addToCart() {
-  addProduct(props.product); // Access product through props
+  cartStore.addProduct(props.product);
 }
 
 // Currency formatting function
@@ -75,7 +67,7 @@ function formatCurrency(value: number) {
 </script>
 
 <style scoped>
-/* Add a custom hover effect */
+/* Tùy chỉnh hover hoặc animations */
 .bg-white:hover {
   transform: translateY(-5px);
 }

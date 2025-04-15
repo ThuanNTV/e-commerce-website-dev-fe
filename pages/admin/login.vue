@@ -20,6 +20,7 @@
       <div class="input-group">
         <input
           v-model="password"
+          :type="showPassword ? 'text' : 'password'"
           type="password"
           id="password"
           required
@@ -81,10 +82,18 @@ const handleLogin = async () => {
 
   try {
     const response = await adminStore.login(email.value, password.value);
-
     if (response.success) {
-      // Redirect to the dashboard page after successful login
-      router.push("/admin/dashboard");
+      // Redirect based on role
+      if (response.roleUser) {
+        const role = response.roleUser;
+        if (role === "admin") {
+          router.push("/admin/dashboard");
+        } else {
+          router.push("/");
+        }
+      } else {
+        router.push("/");
+      }
     } else {
       alert("Login failed: " + response.message);
     }

@@ -11,7 +11,7 @@ export const useAdminStore = defineStore("admin", {
     async login(
       email: string,
       password: string
-    ): Promise<{ success: boolean; message?: string }> {
+    ): Promise<{ success: boolean; message?: string; roleUser?: string }> {
       try {
         const response = await axios.post(
           "http://localhost:3000/api/auth/login",
@@ -28,7 +28,7 @@ export const useAdminStore = defineStore("admin", {
           this.token = accessToken;
           localStorage.setItem("token", accessToken);
 
-          return { success: true };
+          return { success: true, roleUser: user.role };
         } else {
           return {
             success: false,

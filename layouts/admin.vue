@@ -1,15 +1,30 @@
 <template>
-  <div class="min-h-screen bg-gray-50 text-gray-900">
-    <header class="p-4 shadow bg-white">
-      <h1 class="text-xl font-semibold">🛍️ E-Commerce</h1>
-    </header>
+  <div class="admin-layout flex min-h-screen">
+    <!-- Sidebar -->
+    <Sidebar />
 
-    <main class="p-4">
-      <NuxtPage />
+    <!-- Main Content -->
+    <main class="flex-1 bg-gray-100">
+      <Navbar />
+      <section class="p-6">
+        <slot />
+      </section>
     </main>
-
-    <footer class="p-4 text-sm text-center text-gray-500">
-      &copy; {{ new Date().getFullYear() }} Your Shop — All rights reserved.
-    </footer>
   </div>
 </template>
+
+<script setup>
+import Sidebar from "~/components/Sidebar.vue";
+import Navbar from "~/components/Navbar.vue";
+</script>
+
+<style scoped>
+.admin-layout {
+  display: flex;
+  flex-direction: row;
+}
+
+main {
+  flex: 1;
+}
+</style>
