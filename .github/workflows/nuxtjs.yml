@@ -36,6 +36,7 @@ jobs:
           NITRO_PRERENDER_DEBUG: true
           NUXT_PUBLIC_API_BASE: ${{ secrets.API_BASE_URL }}
           NUXT_PUBLIC_SITE_NAME: "My Store"
+          NUXT_APP_BASE_URL: "/e-commerce-website-dev-fe/"
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
@@ -53,12 +54,3 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-        with:
-          publish-dir: ./.output/public
-          publish-branch: gh-pages
-          publish-repo: ${{ github.repository }}
-          token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "Deploy Nuxt 3 to GitHub Pages"
-          allow-empty-commit: true
-          commit-sha: ${{ github.sha }}
-          commit-user-name: "GitHub Actions"

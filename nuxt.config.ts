@@ -19,32 +19,51 @@ export default defineNuxtConfig({
   tailwindcss: {
     config: {
       content: [
-        "./pages/**/*.{js,ts,vue}",
-        "./components/**/*.{js,ts,vue}",
-        "./layouts/**/*.{js,ts,vue}",
-        "./node_modules/primevue/**/*.{vue,js,ts,jsx,tsx}", // PrimeVue components
+        "./components/**/*.{js,vue,ts}",
+        "./layouts/**/*.vue",
+        "./pages/**/*.vue",
+        "./plugins/**/*.{js,ts}",
+        "./node_modules/primevue/**/*.{vue,js,ts,jsx,tsx}",
+        "./app.vue",
+        "./error.vue",
       ],
       theme: {
         extend: {
           colors: {
             primary: "#10b981",
+            secondary: "#3b82f6",
+            danger: "#ef4444",
           },
         },
       },
+      plugins: [
+        require("@tailwindcss/forms"),
+        require("@tailwindcss/typography"),
+      ],
     },
   },
 
   pinia: {
-    autoImports: ["defineStore", ["defineStore", "definePiniaStore"]],
+    autoImports: [
+      "defineStore",
+      "acceptHMRUpdate",
+      ["defineStore", "definePiniaStore"],
+    ],
   },
 
   i18n: {
-    locales: ["en", "vi"],
+    locales: [
+      { code: "en", iso: "en-US", file: "en.json" },
+      { code: "vi", iso: "vi-VN", file: "vi.json" },
+    ],
     defaultLocale: "vi",
-    vueI18n: resolve("./i18n.config.ts"),
-    strategy: "no_prefix",
-    bundle: {
-      optimizeTranslationDirective: false, // Thêm dòng này để loại bỏ cảnh báo
+    lazy: true,
+    langDir: "locales",
+    strategy: "prefix_except_default",
+    detectBrowserLanguage: {
+      useCookie: true,
+      cookieKey: "i18n_redirected",
+      redirectOn: "root",
     },
   },
 
@@ -53,6 +72,7 @@ export default defineNuxtConfig({
     public: {
       stripeKey: process.env.STRIPE_PUBLIC_KEY || "",
       apiBase: process.env.API_BASE_URL || "",
+      baseURL: process.env.NUXT_PUBLIC_BASE_URL || "/",
     },
   },
 
@@ -61,6 +81,32 @@ export default defineNuxtConfig({
     "primeicons/primeicons.css",
     "@/assets/css/primevue/theme.css",
   ],
+  // Cấu hình Nitro
+  nitro: {
+    prerender: {
+      crawlLinks: true,
+      routes: ["/", "/404"],
+    },
+    compressPublicAssets: true,
+  },
 
+  // Cấu hình ứng dụng
+  app: {
+    baseURL: process.env.NUXT_PUBLIC_BASE_URL || "/",
+    buildAssetsDir: "/_nuxt/",
+    head: {
+      meta: [
+        { charset: "utf-8" },
+        { name: "viewport", content: "width=device-width, initial-scale=1" },
+      ],
+      link: [
+        {
+          rel: "icon",
+          type: "image/png",
+          href: "/favicon.png",
+        },
+      ],
+    },
+  },
   compatibilityDate: "2025-04-15",
 });
